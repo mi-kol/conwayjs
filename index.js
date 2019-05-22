@@ -12,8 +12,8 @@ class Node {
 }
 
 let nodes = {};
-for (i = 0; i <= 8; i++) {
-    for (j = 0; j <= 8; j++) {
+for (i = -4; i <= 4; i++) {
+    for (j = -4; j <= 4; j++) {
         propkey = `${i},${j}`
         propvalue = new Node(i,j);
         nodes[propkey] = propvalue;
@@ -128,10 +128,10 @@ function iterate() {
     let maxValue = Math.max.apply(Math, [Math.max.apply(Math, Object.values(nodes).map(function(o) {return o.x})), Math.max.apply(Math, Object.values(nodes).map(function(o) {return o.y}))])
     let minValue = Math.min.apply(Math, [Math.min.apply(Math, Object.values(nodes).map(function(o) {return o.x})), Math.min.apply(Math, Object.values(nodes).map(function(o) {return o.y}))])
 
-    if (maxValue > maxv) {
+    if (maxValue > maxv && maxValue >= 8) {
         prepareMap(maxValue);
     }
-    if (minValue < minv && -minValue > maxValue) {
+    if (minValue < minv && -minValue > maxValue && -minValue > 8) {
         prepareMap(-minValue);
     }
 }
