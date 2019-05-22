@@ -16,10 +16,7 @@ for (i = 0; i <= 8; i++) {
     for (j = 0; j <= 8; j++) {
         propkey = `${i},${j}`
         propvalue = new Node(i,j);
-        // console.log(propkey, "=", propvalue)
         nodes[propkey] = propvalue;
-        // console.log(`created node ${i}, ${j}`)
-        // console.log(nodes)
         for (k = -1; k <= 1; k++) {
             for (l = -1; l<=1; l++) {
                 if (!(k === 0 && l === 0)) {
@@ -29,7 +26,7 @@ for (i = 0; i <= 8; i++) {
         }
     }  
 }
-// console.log(nodes)
+let uniquercn = [];
 
 function prepare(nodes) {
     let actives = [];
@@ -39,8 +36,6 @@ function prepare(nodes) {
             actives.push(node);
         }
     }
-    console.log(actives);
-    // console.log('actives', actives)
     actives.forEach(element => {
         recalcnodes = recalcnodes.concat(nodes[element].neighbors);
     });
@@ -50,8 +45,7 @@ function prepare(nodes) {
         recentlyChanged[node].changed = false;
     }
     recentlyChanged = [];
-    // console.log(recalcnodes);
-    const uniquercn = [...new Set(recalcnodes)]
+    uniquercn = [...new Set(recalcnodes)]
     uniquercn.forEach(element => {
         if (!(element in nodes)) {
             let coords = element.split(',')
@@ -84,27 +78,31 @@ function howManyNearby(element, state) {
                     }
                 } 
             }
-            // console.log("made node");
         }
         return nodes[obj].state === state
     }).length;
 }
 
 function iterate() {
-    // console.log('hi')
-    let maxv = 0
+    let maxv = 0;
+    let minv = 0;
     relevantNodes = prepare(nodes);
-    // console.log(relevantNodes);
     relevantNodes.forEach(element => {
         var ref = nodes[element];
         if (ref.x > maxv) {
             maxv = ref.x
-        } else if (ref.y > maxv) {
+        }
+        if (ref.y > maxv) {
             maxv = ref.y
         }
-        // console.log(ref)
+        if (ref.x < minv) {
+            minv = ref.x;
+        }
+        if (ref.y < minv) {
+            minv = ref.y
+        }
+        // golf this
         if (ref.state === false) {
-            // console.log(howManyNearby(ref,false), ref)
             if (howManyNearby(ref, true) === 3) {
                 ref.propstate = true;
                 ref.changed = true;
@@ -116,7 +114,6 @@ function iterate() {
             }
         }
     });
-    console.log(maxv)
     relevantNodes.forEach(element => {
         var ref = nodes[element];
         if (ref.changed === true) {
@@ -129,9 +126,13 @@ function iterate() {
         }
     }
     let maxValue = Math.max.apply(Math, [Math.max.apply(Math, Object.values(nodes).map(function(o) {return o.x})), Math.max.apply(Math, Object.values(nodes).map(function(o) {return o.y}))])
-    console.log(maxValue)
+    let minValue = Math.min.apply(Math, [Math.min.apply(Math, Object.values(nodes).map(function(o) {return o.x})), Math.min.apply(Math, Object.values(nodes).map(function(o) {return o.y}))])
+
     if (maxValue > maxv) {
-        prepareMap(maxValue)
+        prepareMap(maxValue);
+    }
+    if (minValue < minv && -minValue > maxValue) {
+        prepareMap(-minValue);
     }
 }
 
@@ -172,9 +173,9 @@ function prepareMap(dimension) {
         nodeMap[node] = `<div id=${node} class="square"></div>`
     }
     propadded = '<div class="main">'
-    for (i = 0; i <= dimension; i++) {
+    for (i = -dimension; i <= dimension; i++) {
         rowAdd = '<div class="row">'
-        for (j=0; j<=dimension; j++) {
+        for (j=-dimension; j<=dimension; j++) {
             if (!(`${i},${j}` in nodeMap)) {
                 rowAdd += `<div id=${i},${j} class="square unmade"></div>`
             } else {
@@ -188,9 +189,7 @@ function prepareMap(dimension) {
     root.innerHTML = propadded
     var allBoxes = Array.from(document.querySelectorAll('.square'))
     let difference = allOldBoxes.filter(x => !allBoxes.includes(x)).concat(allBoxes.filter(x => !allOldBoxes.includes(x)));
-    // console.log(difference)
     for (var box in difference) {
-        // console.log(box)
         difference[box].addEventListener('click', boxClickHandler);
     }
 }
@@ -200,36 +199,31 @@ function paintMap() {
     for (var coor in nodes) {
         // please fix this
         let toChange = document.getElementById(`${coor}`)
-        // console.log(coor)
-        // console.log(toChange)
         if (!(toChange == null)) {
             if (nodes[coor].state === true) {
                 toChange.classList.add('alive')
             } else {
-                toChange.className = 'square'
+                toChange.classList = 'square'
             }
         }
     }
 }
 
-nodes["3,2"].state = true;
-nodes["3,2"].propstate = true;
-nodes["4,3"].state = true;
-nodes["4,3"].propstate = true;
-nodes["2,4"].state = true;
-nodes["2,4"].propstate = true;
-nodes["3,4"].state = true;
-nodes["3,4"].propstate = true;
-nodes["4,4"].state = true;
-nodes["4,4"].propstate = true;
-// console.log(nodes)
+// nodes["3,2"].state = true;
+// nodes["3,2"].propstate = true;
+// nodes["4,3"].state = true;
+// nodes["4,3"].propstate = true;
+// nodes["2,4"].state = true;
+// nodes["2,4"].propstate = true;
+// nodes["3,4"].state = true;
+// nodes["3,4"].propstate = true;
+// nodes["4,4"].state = true;
+// nodes["4,4"].propstate = true;
 prepareMap(8)
 paintMap()
 
 let timer = false;
 let play = ''
-
-
 
 document.body.onkeyup = function (e) {
     if (e.keyCode === 32) {
@@ -237,7 +231,7 @@ document.body.onkeyup = function (e) {
             clearInterval(play);
             timer = false;
         } else {
-            play = setInterval(function() {iterate();paintMap();}, 500);
+            play = setInterval(function() {iterate();paintMap();}, 200);
             timer = true;
         }
         
