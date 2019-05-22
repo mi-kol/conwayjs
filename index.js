@@ -130,9 +130,10 @@ function iterate() {
 
     if (maxValue > maxv && maxValue >= 8) {
         prepareMap(maxValue);
-    }
-    if (minValue < minv && -minValue > maxValue && -minValue > 8) {
+        console.log('preparing max', maxValue, maxv)
+    } if (minValue < minv && -minValue > maxValue && -minValue > 8) {
         prepareMap(-minValue);
+        console.log('preparing min', minValue, minv);
     }
 }
 
@@ -212,17 +213,6 @@ function paintMap(b=null) {
         }
     }
 }
-
-// nodes["3,2"].state = true;
-// nodes["3,2"].propstate = true;
-// nodes["4,3"].state = true;
-// nodes["4,3"].propstate = true;
-// nodes["2,4"].state = true;
-// nodes["2,4"].propstate = true;
-// nodes["3,4"].state = true;
-// nodes["3,4"].propstate = true;
-// nodes["4,4"].state = true;
-// nodes["4,4"].propstate = true;
 prepareMap(8)
 paintMap()
 
@@ -238,7 +228,6 @@ document.body.onkeyup = function (e) {
             play = setInterval(function() {iterate();paintMap();}, 200);
             timer = true;
         }
-        
     }
 }
 
