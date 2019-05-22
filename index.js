@@ -162,7 +162,7 @@ function boxClickHandler(event) {
         nodes[event.target.id].propstate = nodes[event.target.id].state;
         nodes[event.target.id].changed = true;
         recentlyChanged.push(event.target.id);
-        paintMap();
+        paintMap(event.target.id);
     }
 }
 
@@ -194,16 +194,20 @@ function prepareMap(dimension) {
     }
 }
 
-
-function paintMap() {
+function paintMap(b=null) {
     for (var coor in nodes) {
         // please fix this
         let toChange = document.getElementById(`${coor}`)
         if (!(toChange == null)) {
             if (nodes[coor].state === true) {
-                toChange.classList.add('alive')
+                toChange.classList.add('alive');
             } else {
-                toChange.classList = 'square'
+                toChange.classList.remove('alive');
+            }
+            if (!(uniquercn.includes(coor)) && !(toChange.classList.contains('alive'))) {
+                toChange.classList.add('not-in-use');
+            } else {
+                toChange.classList.remove('not-in-use');
             }
         }
     }
