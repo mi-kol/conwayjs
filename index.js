@@ -14,7 +14,7 @@ class Node {
 let nodes = {};
 for (i = 0; i <= 8; i++) {
     for (j = 0; j <= 8; j++) {
-        propkey = {x: i, y: j}
+        propkey = `${i},${j}`
         propvalue = new Node(i,j);
         console.log(propkey, "=", propvalue)
         nodes[propkey] = propvalue;
@@ -23,7 +23,7 @@ for (i = 0; i <= 8; i++) {
         for (k = -1; k <= 1; k++) {
             for (l = -1; l<=1; l++) {
                 if (!(k === 0 && l === 0)) {
-                    nodes[{x: i,y: j}].neighbors.push({x: i+k,y: j+l})
+                    nodes[`${i},${j}`].neighbors.push(`${i+k},${j+l}`)
                 }
             } 
         }
@@ -81,19 +81,16 @@ function iterate(nodes) {
     })
 }
 
-nodes[{x:0,y:5}].state = true;
-nodes[{x:0,y:5}].propstate = true;
-nodes[{x:1,y:4}].state = true;
-nodes[{x:1,y:4}].propstate = true;
-nodes[{x:2,y:4}].state = true;
-nodes[{x:2,y:4}].propstate = true;
-nodes[{x:2,y:5}].state = true;
-nodes[{x:2,y:5}].propstate = true;
-nodes[{x:2,y:6}].state = true;
-nodes[{x:2,y:6}].propstate = true;
-
-
-iterate(nodes)
+nodes[`${0},${5}`].state = true;
+nodes[`${0},${5}`].propstate = true;
+nodes[`${1},${4}`].state = true;
+nodes[`${1},${4}`].propstate = true;
+nodes[`${2},${4}`].state = true;
+nodes[`${2},${4}`].propstate = true;
+nodes[`${2},${5}`].state = true;
+nodes[`${2},${5}`].propstate = true;
+nodes[`${2},${6}`].state = true;
+nodes[`${2},${6}`].propstate = true;
 console.log(nodes)
 
 // for (i = 0; i <= 10; i++) {
