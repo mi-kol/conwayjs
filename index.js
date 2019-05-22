@@ -130,9 +130,10 @@ function iterate() {
 
     if (maxValue > maxv && maxValue >= 8) {
         prepareMap(maxValue);
-    }
-    if (minValue < minv && -minValue > maxValue && -minValue > 8) {
+        console.log('preparing max', maxValue, maxv)
+    } if (minValue < minv && -minValue > maxValue && -minValue > 8) {
         prepareMap(-minValue);
+        console.log('preparing min', minValue, minv);
     }
 }
 
