@@ -12,8 +12,8 @@ class Node {
 }
 
 let nodes = {};
-for (i = 0; i <= 16; i++) {
-    for (j = 0; j <= 16; j++) {
+for (i = 0; i <= 8; i++) {
+    for (j = 0; j <= 8; j++) {
         propkey = `${i},${j}`
         propvalue = new Node(i,j);
         // console.log(propkey, "=", propvalue)
@@ -34,16 +34,21 @@ for (i = 0; i <= 16; i++) {
 function prepare(nodes) {
     let actives = [];
     let recalcnodes = [];
-    Object.keys(nodes).forEach(function (item) {
-        if (nodes[item].state === true) {
-            actives.push(item);
+    for (var node in nodes) {
+        if (nodes[node].state === true) {
+            actives.push(node);
         }
-    });
+    }
+    console.log(actives);
     // console.log('actives', actives)
     actives.forEach(element => {
         recalcnodes = recalcnodes.concat(nodes[element].neighbors);
     });
     recalcnodes = recalcnodes.concat(recentlyChanged);
+    recalcnodes = recalcnodes.concat(actives);
+    for (var node in recentlyChanged) {
+        recentlyChanged[node].changed = false;
+    }
     recentlyChanged = [];
     // console.log(recalcnodes);
     const uniquercn = [...new Set(recalcnodes)]
@@ -118,6 +123,11 @@ function iterate() {
             ref.state = ref.propstate;
         }
     });
+    for (var node in nodes) {
+        if (nodes[node].changed === true) {
+            nodes[node].changed = false;
+        }
+    }
     let maxValue = Math.max.apply(Math, [Math.max.apply(Math, Object.values(nodes).map(function(o) {return o.x})), Math.max.apply(Math, Object.values(nodes).map(function(o) {return o.y}))])
     console.log(maxValue)
     if (maxValue > maxv) {
@@ -147,8 +157,8 @@ function boxClickHandler(event) {
                 } 
             }
         }
-        nodes[event.target.id].state = true;
-        nodes[event.target.id].propstate = true;
+        nodes[event.target.id].state = !nodes[event.target.id].state;
+        nodes[event.target.id].propstate = nodes[event.target.id].state;
         nodes[event.target.id].changed = true;
         recentlyChanged.push(event.target.id);
         paintMap();
@@ -166,7 +176,7 @@ function prepareMap(dimension) {
         rowAdd = '<div class="row">'
         for (j=0; j<=dimension; j++) {
             if (!(`${i},${j}` in nodeMap)) {
-                rowAdd += `<div id=${i},${j} class="square"></div>`
+                rowAdd += `<div id=${i},${j} class="square unmade"></div>`
             } else {
                 rowAdd += nodeMap[`${i},${j}`]
             }    
@@ -213,7 +223,7 @@ nodes["3,4"].propstate = true;
 nodes["4,4"].state = true;
 nodes["4,4"].propstate = true;
 // console.log(nodes)
-prepareMap(16)
+prepareMap(8)
 paintMap()
 
 let timer = false;
